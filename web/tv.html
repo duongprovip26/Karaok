@@ -7,58 +7,24 @@
 <link rel="stylesheet" href="css/tv.css">
 </head>
 <body>
-<div id="app">
-  <main id="stage">
-    <div id="player"></div>
-    <div id="idle">
-      <div class="idle-title">🎤 Karaoke</div>
-      <div class="idle-text">Quét mã QR hoặc vào <b id="idleUrl"></b><br>và nhập mã phòng <b class="code" id="idleCode">------</b> để chọn bài</div>
-      <div class="idle-hint">Hoặc bấm 🎤 trên màn hình để tìm bằng giọng nói</div>
-    </div>
-    <div id="nowBar" class="hidden"><span class="label">Đang hát</span> <span id="nowTitle"></span> <span id="nowBy"></span></div>
-  </main>
+<div id="player"></div>
 
-  <aside id="side">
-    <div class="room">
-      <img id="qr" alt="QR">
-      <div>
-        <div class="room-label">Mã phòng</div>
-        <div class="code" id="roomCode">------</div>
-        <div class="room-url" id="roomUrl"></div>
-      </div>
-    </div>
-
-    <div class="buttons">
-      <button class="focusable btn" id="btnVoice">🎤 Nói tên bài</button>
-      <button class="focusable btn" id="btnSearch">🔍 Tìm bài</button>
-      <button class="focusable btn" id="btnPause">⏯ Dừng/Tiếp</button>
-      <button class="focusable btn" id="btnSkip">⏭ Bỏ qua</button>
-      <button class="focusable btn" id="btnReplay">↺ Hát lại</button>
-      <button class="focusable btn" id="btnFull">⛶ Toàn màn hình</button>
-    </div>
-
-    <div class="queue-head">Hàng chờ <span id="queueCount">0</span></div>
-    <ol id="queue"></ol>
-  </aside>
+<!-- Màn hình chờ khi chưa có bài -->
+<div id="idle">
+  <div class="idle-title">🎤 Karaoke</div>
+  <img id="qrBig" alt="QR">
+  <div class="idle-text">Quét mã bằng điện thoại để chọn bài<br>hoặc vào <b id="idleUrl"></b> · mã phòng <b class="code" id="idleCode">------</b></div>
 </div>
 
-<div id="searchLayer" class="layer hidden">
-  <div class="search-box">
-    <input id="q" class="focusable" type="text" placeholder="Nhập tên bài hát…" autocomplete="off">
-    <button class="focusable btn" id="sVoice">🎤</button>
-    <button class="focusable btn" id="sGo">Tìm</button>
-    <button class="focusable btn" id="sClose">✕ Đóng</button>
-  </div>
-  <div id="sStatus"></div>
-  <div id="results"></div>
-</div>
+<!-- Tên bài đang hát (tự ẩn sau vài giây) -->
+<div id="nowBar" class="hidden"><span class="label">Đang hát</span> <span id="nowTitle"></span> <span id="nowBy"></span></div>
 
-<div id="menuLayer" class="layer hidden">
-  <div class="menu">
-    <div id="menuTitle"></div>
-    <button class="focusable btn" id="mTop">⬆ Ưu tiên lên đầu</button>
-    <button class="focusable btn" id="mDel">✕ Xóa khỏi hàng chờ</button>
-    <button class="focusable btn" id="mClose">Đóng</button>
+<!-- Góc dưới phải: QR nhỏ + bài tiếp theo -->
+<div id="corner" class="hidden">
+  <div id="next" class="hidden"><span class="label">Tiếp theo</span><span id="nextTitle"></span></div>
+  <div class="qr-box">
+    <img id="qrSmall" alt="QR">
+    <div class="code" id="cornerCode">------</div>
   </div>
 </div>
 
