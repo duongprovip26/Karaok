@@ -90,6 +90,7 @@ document.querySelectorAll(".tabs button").forEach((b) => b.onclick = () => {
 
 // ---------- Tìm & thêm bài ----------
 async function doSearch() {
+  ++sugToken; clearTimeout(sugTimer); hideSuggest();
   const text = $("#q").value.trim();
   if (!text) return;
   $("#q").blur();
@@ -123,7 +124,92 @@ async function doSearch() {
   }
 }
 $("#qGo").onclick = doSearch;
-$("#q").addEventListener("keydown", (e) => { if (e.key === "Enter") doSearch(); });
+// ---------- Gợi ý khi gõ (không tốn lượt tìm YouTube API) ----------
+const strip = (s = "") => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[đĐ]/g, "d").toLowerCase();
+let sugTimer, sugSeq = 0, sugToken = 0, sugItems = [], sugSel = -1;
+
+// Gợi ý tìm kiếm của YouTube qua JSONP
+function ytSuggest(q) {
+  return new Promise((resolve) => {
+    const cb = "__ytsug" + (++sugSeq);
+    const s = document.createElement("script");
+    let finished = false;
+    const done = (v) => { if (finished) return; finished = true; window[cb] = () => {}; s.remove(); resolve(v); };
+    window[cb] = (data) => done((data?.[1] || []).map((x) => (Array.isArray(x) ? x[0] : x)).filter((x) => typeof x === "string"));
+    s.onerror = () => done([]);
+    setTimeout(() => done([]), 3000);
+    s.src = `https://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=vi&gl=vn&q=${encodeURIComponent(q)}&callback=${cb}`;
+    document.head.appendChild(s);
+  });
+}
+
+function hideSuggest() {
+  $("#suggest").classList.add("hidden");
+  sugItems = []; sugSel = -1;
+}
+
+function renderSuggest() {
+  const ul = $("#suggest");
+  if (!sugItems.length) return hideSuggest();
+  ul.innerHTML = sugItems.map((s, i) => `
+    <li data-i="${i}" class="${i === sugSel ? "sel" : ""}">
+      <span class="ic">${s.type === "history" ? "🕘" : "🔍"}</span>
+      <span class="tx">${escapeHtml(s.text)}</span>
+      ${s.type === "history" ? `<span class="small">＋ thêm</span>` : ""}
+    </li>`).join("");
+  ul.classList.remove("hidden");
+  ul.querySelectorAll("li").forEach((li) => li.addEventListener("pointerdown", (e) => {
+    e.preventDefault(); // giữ bàn phím, không mất focus
+    pickSuggest(+li.dataset.i);
+  }));
+}
+
+async function pickSuggest(i) {
+  const s = sugItems[i];
+  if (!s) return;
+  hideSuggest();
+  if (s.type === "history") {
+    await addToQueue(code, s.item, name);
+    toast("Đã thêm: " + s.item.title);
+    return;
+  }
+  $("#q").value = s.text;
+  doSearch();
+}
+
+async function updateSuggest() {
+  const q = $("#q").value.trim();
+  const token = ++sugToken;
+  if (!q || parseYouTubeId(q)) return hideSuggest();
+  const sq = strip(q);
+  const local = historyList.filter((h) => strip(h.title).includes(sq)).slice(0, 3)
+    .map((h) => ({ type: "history", text: h.title, item: h }));
+  sugItems = local; sugSel = -1;
+  renderSuggest();
+  const remote = await ytSuggest(q);
+  if (token !== sugToken || $("#q").value.trim() !== q) return; // đã gõ tiếp
+  sugItems = [...local, ...remote.slice(0, 8).map((t) => ({ type: "yt", text: t }))];
+  renderSuggest();
+}
+
+$("#q").addEventListener("input", () => {
+  clearTimeout(sugTimer);
+  sugTimer = setTimeout(updateSuggest, 200);
+});
+$("#q").addEventListener("blur", () => setTimeout(hideSuggest, 150));
+$("#q").addEventListener("keydown", (e) => {
+  const open = !$("#suggest").classList.contains("hidden") && sugItems.length;
+  if (open && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+    e.preventDefault();
+    sugSel = (sugSel + (e.key === "ArrowDown" ? 1 : -1) + sugItems.length) % sugItems.length;
+    renderSuggest();
+  } else if (e.key === "Escape") {
+    hideSuggest();
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    if (open && sugSel >= 0) pickSuggest(sugSel); else { hideSuggest(); doSearch(); }
+  }
+});
 
 // Tìm bằng giọng nói (Chrome Android, Safari iOS mới)
 $("#qVoice").onclick = () => {

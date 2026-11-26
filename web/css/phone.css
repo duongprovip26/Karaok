@@ -69,3 +69,14 @@ header {
 .tip { margin-top: 14px; padding: 12px; border-radius: 12px; background: #17172c; font-size: 14px; line-height: 1.5; opacity: .9; }
 .tip button { display: block; width: 100%; margin-top: 10px; }
 button:disabled{opacity:.3}
+.search { position: relative; }
+#suggest {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 15; list-style: none; margin: 0; padding: 4px 0;
+  background: #1b1b33; border: 1px solid #33335a; border-radius: 10px; max-height: 60vh; overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,.5);
+}
+#suggest li { padding: 11px 14px; display: flex; gap: 10px; align-items: center; }
+#suggest li:active, #suggest li.sel { background: #2d2d55; }
+#suggest .ic { opacity: .6; width: 18px; text-align: center; flex-shrink: 0; }
+#suggest .tx { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#suggest b { color: #ffd400; font-weight: 600; }
