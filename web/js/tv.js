@@ -70,12 +70,13 @@ function loadYouTubeApi() {
       width: "100%", height: "100%",
       playerVars: {
         autoplay: 1, controls: 0, rel: 0, modestbranding: 1, playsinline: 1,
-        iv_load_policy: 3, fs: 0, disablekb: 1, origin: location.origin,
+        iv_load_policy: 3, fs: 0, disablekb: 1, cc_load_policy: 0, origin: location.origin,
       },
       events: {
         onReady: () => { playerReady = true; maybeAutoPlay(); },
         onStateChange: (e) => {
           if (e.data === YT.PlayerState.ENDED) finishSong(true);
+          if (e.data === YT.PlayerState.PLAYING) hideCaptions();
           if (e.data === YT.PlayerState.PLAYING && nowPlaying && nowPlaying.title === "Video YouTube") {
             const t = player.getVideoData?.().title;
             if (t) { nowPlaying.title = t; $("#nowTitle").textContent = t; update(roomRef(code, "nowPlaying"), { title: t }); }
@@ -94,6 +95,19 @@ function loadYouTubeApi() {
   const s = document.createElement("script");
   s.src = "https://www.youtube.com/iframe_api";
   document.head.appendChild(s);
+}
+
+// Tắt phụ đề tự động của YouTube (gọi vài lần vì YouTube có thể bật lại sau khi tải xong)
+function hideCaptions() {
+  const off = () => {
+    try {
+      player.unloadModule("captions");
+      player.unloadModule("cc");
+      player.setOption("captions", "track", {});
+    } catch (_) {}
+  };
+  off();
+  [500, 1500, 3000].forEach((ms) => setTimeout(off, ms));
 }
 
 function maybeAutoPlay() {
