@@ -168,19 +168,19 @@ function renderQueue(list) {
   });
 }
 
-let history = [];
+let historyList = [];
 function renderHistory(val) {
-  history = Object.values(val || {}).sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 100);
+  historyList = Object.values(val || {}).sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 100);
   const box = $("#history");
-  if (!history.length) { box.innerHTML = `<div class="empty">Chưa có bài nào được hát</div>`; return; }
-  box.innerHTML = history.map((it, i) => `
+  if (!historyList.length) { box.innerHTML = `<div class="empty">Chưa có bài nào được hát</div>`; return; }
+  box.innerHTML = historyList.map((it, i) => `
     <div class="item">
       <img src="${escapeHtml(it.thumb)}" alt="" loading="lazy">
       <div class="info"><div class="t">${escapeHtml(it.title)}</div><div class="small">${escapeHtml(it.channel || "")}</div></div>
       <div class="acts"><button class="primary" data-h="${i}">＋</button></div>
     </div>`).join("");
   box.querySelectorAll("button[data-h]").forEach((b) => b.onclick = async () => {
-    await addToQueue(code, history[+b.dataset.h], name);
+    await addToQueue(code, historyList[+b.dataset.h], name);
     b.textContent = "✓";
     b.classList.remove("primary");
     b.classList.add("added");
