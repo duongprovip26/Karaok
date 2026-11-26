@@ -36,6 +36,7 @@
   <nav class="tabs">
     <button data-tab="search" class="active">🔍 Tìm bài</button>
     <button data-tab="queue">📋 Hàng chờ <span id="qCount">0</span></button>
+    <button data-tab="history">🕘 Đã hát</button>
   </nav>
 
   <div id="tab-search" class="tab">
@@ -55,6 +56,11 @@
 
   <div id="tab-queue" class="tab hidden">
     <ol id="queue"></ol>
+  </div>
+
+  <div id="tab-history" class="tab hidden">
+    <div class="small">Bài đã hát trong phòng này – bấm ＋ để thêm lại (không tốn lượt tìm)</div>
+    <div id="history"></div>
   </div>
 
   <footer class="controls">

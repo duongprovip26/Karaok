@@ -109,6 +109,10 @@ async function playNext() {
     key: item.key, videoId: item.videoId, title: item.title, by: item.by || "", thumb: item.thumb || "",
     paused: false, startedAt: serverTimestamp(),
   });
+  // Lưu lịch sử "Đã hát gần đây" để điện thoại thêm lại không cần tìm
+  set(roomRef(code, `history/${item.videoId}`), {
+    videoId: item.videoId, title: item.title, channel: item.channel || "", thumb: item.thumb || "", ts: Date.now(),
+  });
   $("#idle").classList.add("hidden");
   $("#corner").classList.remove("hidden");
   showNowBar(item);

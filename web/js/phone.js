@@ -75,6 +75,7 @@ function enterRoom(c) {
   unsub = [
     onValue(roomRef(c, "queue"), (s) => renderQueue(sortQueue(s.val()))),
     onValue(roomRef(c, "nowPlaying"), (s) => renderNow(s.val())),
+    onValue(roomRef(c, "history"), (s) => renderHistory(s.val())),
     onValue(roomRef(c, "lastScore"), (s) => {
       if (firstScore) { firstScore = false; return; } // bỏ qua điểm cũ khi mới vào
       const v = s.val();
@@ -177,6 +178,26 @@ function renderQueue(list) {
   ol.querySelectorAll("[data-top]").forEach((b) => b.onclick = () => prioritize(code, b.dataset.top).then(() => toast("Đã ưu tiên lên đầu")));
   ol.querySelectorAll("[data-del]").forEach((b) => b.onclick = () => {
     if (confirm("Xóa bài này khỏi hàng chờ?")) removeFromQueue(code, b.dataset.del);
+  });
+}
+
+let history = [];
+function renderHistory(val) {
+  history = Object.values(val || {}).sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 100);
+  const box = $("#history");
+  if (!history.length) { box.innerHTML = `<div class="empty">Chưa có bài nào được hát</div>`; return; }
+  box.innerHTML = history.map((it, i) => `
+    <div class="item">
+      <img src="${escapeHtml(it.thumb)}" alt="" loading="lazy">
+      <div class="info"><div class="t">${escapeHtml(it.title)}</div><div class="small">${escapeHtml(it.channel || "")}</div></div>
+      <div class="acts"><button class="primary" data-h="${i}">＋</button></div>
+    </div>`).join("");
+  box.querySelectorAll("button[data-h]").forEach((b) => b.onclick = async () => {
+    await addToQueue(code, history[+b.dataset.h], name);
+    b.textContent = "✓";
+    b.classList.remove("primary");
+    b.classList.add("added");
+    toast("Đã thêm vào hàng chờ");
   });
 }
 

@@ -30,7 +30,7 @@ function cacheKey(q) {
   return q.toLowerCase().replace(/[.#$\[\]\/]/g, " ").replace(/\s+/g, " ").trim().slice(0, 200);
 }
 
-/** Tìm bài trên YouTube (có cache 7 ngày trong Firebase để tiết kiệm 100 lượt/ngày). */
+/** Tìm bài trên YouTube (có cache 30 ngày trong Firebase để tiết kiệm 100 lượt/ngày). */
 export async function searchYouTube(text) {
   const q = text.trim();
   if (!q) return [];
@@ -42,7 +42,7 @@ export async function searchYouTube(text) {
   const cacheRef = ref(db, `searchCache/${key}`);
   try {
     const snap = await get(cacheRef);
-    if (snap.exists() && Date.now() - snap.val().ts < 7 * 864e5) return snap.val().items || [];
+    if (snap.exists() && Date.now() - snap.val().ts < 30 * 864e5) return snap.val().items || [];
   } catch (_) { /* bỏ qua lỗi cache */ }
 
   const url = new URL("https://www.googleapis.com/youtube/v3/search");

@@ -12,5 +12,5 @@ export const CONFIG = {
   },
   // KHÔNG BẮT BUỘC. Để trống "" thì không tìm theo tên được, chỉ thêm bài bằng link/chia sẻ từ app YouTube.
   // Lấy ở Google Cloud Console > APIs & Services > Credentials > API key (đã bật YouTube Data API v3)
-  youtubeApiKey: "",
+  youtubeApiKey: "AIzaSyCN1c5rOkdQ_CrjC6oMdpc9wxL1zNTWRNI",
 };
