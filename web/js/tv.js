@@ -1,5 +1,5 @@
 import {
-  login, roomRef, roomExists, sortQueue, randomScore,
+  login, roomRef, roomExists, sortQueue, randomScore, db, ref,
   set, update, remove, onValue, onChildAdded, onDisconnect, serverTimestamp,
 } from "./common.js";
 
@@ -28,8 +28,14 @@ async function init() {
   $("#cornerCode").textContent = code;
   $("#idleUrl").textContent = location.host;
 
-  await update(roomRef(code), { tvOnline: true, nowPlaying: null });
-  onDisconnect(roomRef(code, "tvOnline")).set(false);
+  await update(roomRef(code), { nowPlaying: null });
+  // Báo "TV đang mở" cho điện thoại; tự về false khi app tắt hoặc mất mạng
+  onValue(ref(db, ".info/connected"), async (snap) => {
+    if (snap.val() !== true) return;
+    await onDisconnect(roomRef(code, "tvOnline")).set(false);
+    await set(roomRef(code, "tvOnline"), true);
+  });
+  window.addEventListener("pagehide", () => set(roomRef(code, "tvOnline"), false));
 
   onValue(roomRef(code, "queue"), (snap) => {
     queue = sortQueue(snap.val());

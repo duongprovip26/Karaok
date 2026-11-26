@@ -57,6 +57,7 @@ function enterRoom(c) {
     onValue(roomRef(c, "queue"), (s) => renderQueue(sortQueue(s.val()))),
     onValue(roomRef(c, "nowPlaying"), (s) => renderNow(s.val())),
     onValue(roomRef(c, "history"), (s) => renderHistory(s.val())),
+    onValue(roomRef(c, "tvOnline"), (s) => setTvOnline(s.val() === true)),
     onValue(roomRef(c, "lastScore"), (s) => {
       if (firstScore) { firstScore = false; return; } // bỏ qua điểm cũ khi mới vào
       const v = s.val();
@@ -77,10 +78,17 @@ async function addShared(text) {
 $("#hLeave").onclick = () => {
   unsub.forEach((u) => u());
   unsub = [];
+  setTvOnline(true);
   localStorage.removeItem("room");
   history.replaceState(null, "", location.pathname);
   showJoin();
 };
+
+// ---------- TV chưa mở app => khóa trang chọn bài ----------
+function setTvOnline(on) {
+  $("#tvOff").classList.toggle("hidden", on);
+  if (!on) { hideSuggest(); document.activeElement?.blur(); }
+}
 
 // ---------- Tabs ----------
 document.querySelectorAll(".tabs button").forEach((b) => b.onclick = () => {
