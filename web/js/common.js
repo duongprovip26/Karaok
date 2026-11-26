@@ -109,6 +109,18 @@ export async function prioritize(code, key) {
   await update(roomRef(code, `queue/${key}`), { order: (list[0].order || Date.now()) - 1 });
 }
 
+/** Đổi chỗ bài với bài liền trước (dir=-1) hoặc liền sau (dir=1). */
+export async function moveInQueue(code, key, dir) {
+  const snap = await get(roomRef(code, "queue"));
+  const list = sortQueue(snap.val());
+  const i = list.findIndex((x) => x.key === key);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  let a = list[i].order || 0, b = list[j].order || 0;
+  if (a === b) b = a + dir; // tránh trùng thứ tự
+  await update(roomRef(code, "queue"), { [`${list[i].key}/order`]: b, [`${list[j].key}/order`]: a });
+}
+
 export const removeFromQueue = (code, key) => remove(roomRef(code, `queue/${key}`));
 
 export const sendCommand = (code, cmd) => push(roomRef(code, "commands"), { cmd, ts: Date.now() });

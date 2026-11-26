@@ -1,5 +1,5 @@
 import {
-  login, roomRef, roomExists, sortQueue, addToQueue, prioritize, removeFromQueue,
+  login, roomRef, roomExists, sortQueue, addToQueue, prioritize, moveInQueue, removeFromQueue,
   searchYouTube, itemFromLink, parseYouTubeId, sendCommand, escapeHtml, onValue,
 } from "./common.js";
 
@@ -166,10 +166,14 @@ function renderQueue(list) {
       <img src="${escapeHtml(it.thumb)}" alt="" loading="lazy">
       <div class="info"><div class="t">${i + 1}. ${escapeHtml(it.title)}</div><div class="small">${escapeHtml(it.by || "")}</div></div>
       <div class="acts">
-        ${i > 0 ? `<button data-top="${it.key}" title="Ưu tiên">⬆</button>` : ""}
+        <button data-up="${it.key}" title="Lên" ${i === 0 ? "disabled" : ""}>▲</button>
+        <button data-down="${it.key}" title="Xuống" ${i === list.length - 1 ? "disabled" : ""}>▼</button>
+        ${i > 1 ? `<button data-top="${it.key}" title="Lên đầu">⤒</button>` : ""}
         <button data-del="${it.key}" title="Xóa">✕</button>
       </div>
     </li>`).join("");
+  ol.querySelectorAll("[data-up]").forEach((b) => b.onclick = () => moveInQueue(code, b.dataset.up, -1));
+  ol.querySelectorAll("[data-down]").forEach((b) => b.onclick = () => moveInQueue(code, b.dataset.down, 1));
   ol.querySelectorAll("[data-top]").forEach((b) => b.onclick = () => prioritize(code, b.dataset.top).then(() => toast("Đã ưu tiên lên đầu")));
   ol.querySelectorAll("[data-del]").forEach((b) => b.onclick = () => {
     if (confirm("Xóa bài này khỏi hàng chờ?")) removeFromQueue(code, b.dataset.del);
