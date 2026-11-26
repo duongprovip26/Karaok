@@ -17,19 +17,6 @@ let pendingShare = [params.get("url"), params.get("text"), params.get("title"), 
 if (!parseYouTubeId(pendingShare)) pendingShare = "";
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
-let installPrompt = null;
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  installPrompt = e;
-  $("#btnInstall").classList.remove("hidden");
-});
-$("#btnInstall").onclick = async () => {
-  if (!installPrompt) return;
-  installPrompt.prompt();
-  await installPrompt.userChoice;
-  installPrompt = null;
-  $("#btnInstall").classList.add("hidden");
-};
 
 boot();
 

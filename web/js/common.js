@@ -35,7 +35,7 @@ export async function searchYouTube(text) {
   const q = text.trim();
   if (!q) return [];
   if (!CONFIG.youtubeApiKey) {
-    throw new Error("Chưa bật tìm theo tên. Hãy mở app YouTube → Chia sẻ → chọn Karaoke, hoặc dán link YouTube trên điện thoại.");
+    throw new Error("Chưa bật tìm theo tên. Hãy dán link YouTube vào ô tìm.");
   }
   const query = /karaoke|beat/i.test(q) ? q : q + " karaoke";
   const key = cacheKey(query);
