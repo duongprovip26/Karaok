@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "rooms": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null && $code.matches(/^[0-9]{6}$/)"
+      }
+    },
+    "searchCache": {
+      ".read": "auth != null",
+      "$q": { ".write": "auth != null" }
+    }
+  }
+}

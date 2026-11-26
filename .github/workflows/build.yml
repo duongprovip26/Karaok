@@ -1,0 +1,48 @@
+name: Build APK & Deploy Web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy-web:
+    # Chỉ chạy khi đã thêm secret FIREBASE_SERVICE_ACCOUNT
+    runs-on: ubuntu-latest
+    env:
+      HAS_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy web + rules lên Firebase
+        if: env.HAS_SA == 'true'
+        env:
+          SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID || 'karaok-c2030' }}
+        run: |
+          echo "$SA_JSON" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx --yes firebase-tools@13 deploy --only hosting,database --project "$PROJECT_ID" --non-interactive
+      - name: Bỏ qua deploy
+        if: env.HAS_SA != 'true'
+        run: echo "Chưa có secret FIREBASE_SERVICE_ACCOUNT - bỏ qua deploy web (xem README)."
+
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - name: Build APK
+        working-directory: android
+        run: gradle assembleRelease -PWEB_URL="${{ vars.WEB_URL || 'https://karaok-c2030.web.app' }}" --no-daemon
+      - name: Đổi tên APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk KaraokeTV.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KaraokeTV-apk
+          path: KaraokeTV.apk

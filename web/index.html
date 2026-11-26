@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b14">
+<title>Karaoke – Chọn bài</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="css/phone.css">
+</head>
+<body>
+
+<section id="join" class="hidden">
+  <div class="logo">🎤 Karaoke</div>
+  <label>Mã phòng (hiện trên TV)</label>
+  <input id="jCode" inputmode="numeric" maxlength="6" placeholder="123456">
+  <label>Tên của bạn</label>
+  <input id="jName" maxlength="20" placeholder="VD: Minh">
+  <button id="jGo" class="primary">Vào phòng</button>
+  <div id="jErr" class="err"></div>
+</section>
+
+<section id="main" class="hidden">
+  <header>
+    <div><b>Phòng <span id="hCode"></span></b> · <span id="hName"></span></div>
+    <button id="hLeave" class="link">Đổi phòng</button>
+  </header>
+
+  <div id="now" class="now hidden">
+    <img id="nowThumb" alt="">
+    <div><div class="small">Đang hát</div><div id="nowTitle" class="title"></div><div id="nowBy" class="small"></div></div>
+  </div>
+
+  <nav class="tabs">
+    <button data-tab="search" class="active">🔍 Tìm bài</button>
+    <button data-tab="queue">📋 Hàng chờ <span id="qCount">0</span></button>
+  </nav>
+
+  <div id="tab-search" class="tab">
+    <div class="search">
+      <input id="q" type="search" placeholder="Tên bài hát hoặc dán link YouTube" enterkeyhint="search">
+      <button id="qVoice" title="Nói">🎤</button>
+      <button id="qGo" class="primary">Tìm</button>
+    </div>
+    <div id="sStatus" class="small"></div>
+    <div id="tip" class="tip">
+      💡 Không cần gõ tìm: mở app <b>YouTube</b> → bài muốn hát → <b>Chia sẻ</b> → chọn <b>Karaoke</b>
+      (Android, sau khi bấm "Cài đặt"), hoặc <b>Sao chép đường liên kết</b> rồi dán vào ô trên.
+      <button id="btnInstall" class="primary hidden">📲 Cài đặt Karaoke lên điện thoại</button>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <div id="tab-queue" class="tab hidden">
+    <ol id="queue"></ol>
+  </div>
+
+  <footer class="controls">
+    <button data-cmd="toggle">⏯ Dừng/Tiếp</button>
+    <button data-cmd="replay">↺ Hát lại</button>
+    <button data-cmd="skip">⏭ Bỏ qua</button>
+  </footer>
+</section>
+
+<div id="scorePop" class="hidden"></div>
+<div id="toast" class="hidden"></div>
+<script type="module" src="js/phone.js"></script>
+</body>
+</html>

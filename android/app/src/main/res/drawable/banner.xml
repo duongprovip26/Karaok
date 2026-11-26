@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Banner hiện trên màn hình chính Google TV (tỉ lệ 16:9, 320x180) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp" android:height="180dp"
+    android:viewportWidth="320" android:viewportHeight="180">
+    <path android:fillColor="#2A1452" android:pathData="M0,0h320v180h-320z" />
+    <path android:fillColor="#4B2390" android:pathData="M0,180L320,40V180z" />
+    <!-- micro lớn -->
+    <path android:fillColor="#FFD400" android:pathData="M160,34a20,20 0,0 1,20 20v32a20,20 0,0 1,-40 0v-32a20,20 0,0 1,20 -20z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M126,82h8a26,26 0,0 0,52 0h8a34,34 0,0 1,-30 33.7v16.3h-8v-16.3a34,34 0,0 1,-30 -33.7z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M140,132h40v8h-40z" />
+    <!-- nốt nhạc -->
+    <path android:fillColor="#FFD400" android:pathData="M84,60v40a10,8 0,1 1,-6 -7.3v-40.7l26,-6v8z" />
+    <path android:fillColor="#FFD400" android:pathData="M244,70v34a10,8 0,1 1,-6 -7.3v-34.7l22,-5v8z" />
+</vector>
