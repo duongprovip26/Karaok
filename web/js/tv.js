@@ -35,7 +35,7 @@ async function init() {
     queue = sortQueue(snap.val());
     if (knownKeys) {
       const added = queue.filter((q) => !knownKeys.has(q.key));
-      if (added.length && nowPlaying) toast(`🎵 ${added[0].by || "Ai đó"} vừa thêm: ${added[0].title}`, 4000);
+      if (added.length && nowPlaying) toast(`🎵 Vừa thêm: ${added[0].title}`, 4000);
     }
     knownKeys = new Set(queue.map((q) => q.key));
     renderNext();

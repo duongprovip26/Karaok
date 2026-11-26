@@ -98,7 +98,7 @@ export function sortQueue(val) {
 export function addToQueue(code, item, by) {
   return push(roomRef(code, "queue"), {
     videoId: item.videoId, title: item.title || "", channel: item.channel || "",
-    thumb: item.thumb || "", by: by || "Khách", order: Date.now(),
+    thumb: item.thumb || "", by: by || "", order: Date.now(),
   });
 }
 

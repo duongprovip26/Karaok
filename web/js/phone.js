@@ -5,7 +5,7 @@ import {
 
 const $ = (s) => document.querySelector(s);
 let code = null;
-let name = localStorage.getItem("name") || "";
+const name = ""; // không cần nhập tên
 let results = [];
 let unsub = [];
 let firstScore = true;
@@ -25,27 +25,22 @@ async function boot() {
   const urlRoom = params.get("room");
   const saved = localStorage.getItem("room");
   const c = urlRoom || saved;
-  $("#jName").value = name;
   if (c) $("#jCode").value = c;
-  if (c && name && (await roomExists(c))) enterRoom(c);
+  if (c && (await roomExists(c))) enterRoom(c);
   else showJoin();
 }
 
 function showJoin() {
   $("#main").classList.add("hidden");
   $("#join").classList.remove("hidden");
-  (name ? $("#jCode") : $("#jName")).focus();
+  $("#jCode").focus();
 }
 
 $("#jGo").onclick = async () => {
   const c = $("#jCode").value.trim();
-  const n = $("#jName").value.trim();
   $("#jErr").textContent = "";
   if (!/^\d{6}$/.test(c)) return ($("#jErr").textContent = "Mã phòng gồm 6 chữ số");
-  if (!n) return ($("#jErr").textContent = "Nhập tên để mọi người biết ai chọn bài nhé");
   if (!(await roomExists(c))) return ($("#jErr").textContent = "Không tìm thấy phòng. Kiểm tra lại mã trên TV.");
-  name = n;
-  localStorage.setItem("name", n);
   enterRoom(c);
 };
 
@@ -56,7 +51,6 @@ function enterRoom(c) {
   $("#join").classList.add("hidden");
   $("#main").classList.remove("hidden");
   $("#hCode").textContent = c;
-  $("#hName").textContent = name;
   unsub.forEach((u) => u());
   firstScore = true;
   unsub = [
